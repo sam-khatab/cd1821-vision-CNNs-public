@@ -1,5 +1,4 @@
 import math
-import os
 import torch
 import torch.utils.data
 from pathlib import Path
@@ -27,10 +26,8 @@ def get_data_loaders(
     """
 
     if num_workers == -1:
-        # On Windows, DataLoader multiprocessing often fails for large image batches
-        # because each worker uses shared file mappings. Use single-process loading
-        # there by default, while keeping the original multi-core behavior elsewhere.
-        num_workers = 0 if os.name == "nt" else multiprocessing.cpu_count()
+        # Use all cores
+        num_workers = multiprocessing.cpu_count()
 
     # We will fill this up later
     data_loaders = {"train": None, "valid": None, "test": None}

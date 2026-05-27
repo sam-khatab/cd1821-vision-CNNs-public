@@ -42,7 +42,8 @@ class MyModel(nn.Module):
         # YOUR CODE HERE: process the input tensor through the
         # feature extractor, the pooling and the final linear
         # layers (if appropriate for the architecture chosen)
-        return self.net(x)
+        x = self.net(x)
+        return x
 
 
 ######################################################################################

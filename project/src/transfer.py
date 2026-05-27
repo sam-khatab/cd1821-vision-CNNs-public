@@ -32,7 +32,9 @@ def get_model_transfer_learning(model_name="resnet18", n_classes=50):
 
     # 2. Create a new linear layer with the appropriate number of inputs and
     #    outputs
-    model_transfer.fc = nn.Linear(num_ftrs, n_classes)
+    model_transfer.fc1 = nn.Linear(num_ftrs, 64)
+    model_transfer.Dropout = nn.Dropout(p=0.3)
+    model_transfer.fc2 = nn.Linear(64, n_classes)
 
     return model_transfer
 
