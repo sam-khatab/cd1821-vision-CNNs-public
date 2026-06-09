@@ -4,7 +4,7 @@ import torch.nn as nn
 
 # define the CNN architecture
 class MyModel(nn.Module):
-    def __init__(self, num_classes: int = 1000, dropout: float = 0.7) -> None:
+    def __init__(self, num_classes: int = 1000, dropout: float = 0.3) -> None:
 
         super().__init__()
         # YOUR CODE HERE
@@ -13,29 +13,54 @@ class MyModel(nn.Module):
         # the Dropout layer, use the variable "dropout" to indicate how much
         # to use (like nn.Dropout(p=dropout))
         self.net = nn.Sequential(
+        
         # convolutional layer (sees 3x224x224 image tensor)
-        nn.Conv2d(3, 16, 3, padding=1),
+        nn.Conv2d(3, 16, kernel_size = 3, padding=1),
+        nn.BatchNorm2d(16),
         #ReLU activation function (sees 16x224x224 tensor)
         nn.ReLU(),
         # max pooling layer
         nn.MaxPool2d(2, 2),
+
         # convolutional layer (sees 16x112x112 tensor)
-        nn.Conv2d(16, 32, 3, padding=1),
+        nn.Conv2d(16, 32, kernel_size = 3, padding=1),
+        nn.BatchNorm2d(32),
         #ReLU activation function (sees 32x112x112 tensor)
         nn.ReLU(),
         # max pooling layer
         nn.MaxPool2d(2, 2),
-        #Flatten layer (32x56x56 -> 100352)
+
+         # convolutional layer (sees 32x56x56 tensor)
+        nn.Conv2d(32, 64, kernel_size = 3, padding=1),
+        nn.BatchNorm2d(64),
+        #ReLU activation function (sees 64x56x56 tensor)
+        nn.ReLU(),
+        # max pooling layer
+        nn.MaxPool2d(2, 2),
+
+
+        #Flatten layer (64x28x28 -> 50176)
         nn.Flatten(),
-        # linear layer (32 * 56 * 56 -> 500)
-        nn.Linear(32 * 56 * 56, 500),
-        #ReLU activation function (sees 500 tensor)
+        # linear layer (64 * 28 * 28 -> 256)
+        nn.Linear(64 * 28 * 28, 256),
+        #ReLU activation function (sees 256 tensor)
         nn.ReLU(),
         #Dropout layer
         nn.Dropout(p=dropout),
-        # linear layer (500 -> num_classes)
-        nn.Linear(500, num_classes) #logits as output so no softmax at end of the network
+        nn.Linear(256, num_classes) #logits as output so no softmax at end of the network
         )
+
+        self._initialize_weights()
+
+    def _initialize_weights(self) -> None:
+        for module in self.modules():
+            if isinstance(module, (nn.Conv2d, nn.Linear)):
+                nn.init.kaiming_normal_(module.weight, nonlinearity="relu")
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+            elif isinstance(module, nn.BatchNorm2d):
+                nn.init.ones_(module.weight)
+                nn.init.zeros_(module.bias)
         
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
