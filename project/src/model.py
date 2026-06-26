@@ -12,47 +12,42 @@ class MyModel(nn.Module):
         # to size appropriately the output of your classifier, and if you use
         # the Dropout layer, use the variable "dropout" to indicate how much
         # to use (like nn.Dropout(p=dropout))
+        # Input size of image 224*224
         self.net = nn.Sequential(
-        
-        # convolutional layer (sees 3x224x224 image tensor)
-        nn.Conv2d(3, 16, kernel_size = 3, padding=1),
+        nn.Conv2d(3, 16, kernel_size=3, padding=1),
         nn.BatchNorm2d(16),
-        #ReLU activation function (sees 16x224x224 tensor)
-        nn.ReLU(),
-        # max pooling layer
+        nn.ReLU(inplace=True),
         nn.MaxPool2d(2, 2),
+        
+        #nn.Conv2d(16, 16, kernel_size=3, padding=1),
+        #nn.ReLU(inplace=True),
+        #nn.MaxPool2d(2, 2),
 
-        # convolutional layer (sees 16x112x112 tensor)
-        nn.Conv2d(16, 32, kernel_size = 3, padding=1),
+        nn.Conv2d(16, 32, kernel_size=3, padding=1),
         nn.BatchNorm2d(32),
-        #ReLU activation function (sees 32x112x112 tensor)
-        nn.ReLU(),
-        # max pooling layer
-        nn.MaxPool2d(2, 2),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(16, 16),
+        
+        #nn.Conv2d(32, 32, kernel_size=3, padding=1),
+        #nn.ReLU(inplace=True),
+        #nn.MaxPool2d(2, 2),
 
-         # convolutional layer (sees 32x56x56 tensor)
-        nn.Conv2d(32, 64, kernel_size = 3, padding=1),
-        nn.BatchNorm2d(64),
-        #ReLU activation function (sees 64x56x56 tensor)
-        nn.ReLU(),
-        # max pooling layer
-        nn.MaxPool2d(2, 2),
-
-
-        #Flatten layer (64x28x28 -> 50176)
         nn.Flatten(),
-        # linear layer (64 * 28 * 28 -> 256)
-        nn.Linear(64 * 28 * 28, 256),
-        #ReLU activation function (sees 256 tensor)
-        nn.ReLU(),
-        #Dropout layer
+ 
+        
+        nn.Linear(32 * 7 * 7, 128),
+        nn.ReLU(inplace=True),
         nn.Dropout(p=dropout),
-        nn.Linear(256, num_classes) #logits as output so no softmax at end of the network
+        nn.Linear(128, num_classes)
         )
 
         self._initialize_weights()
 
+
+
     def _initialize_weights(self) -> None:
+        #SEED to ensure reproducibility
+        #torch.manual_seed(42)
         for module in self.modules():
             if isinstance(module, (nn.Conv2d, nn.Linear)):
                 nn.init.kaiming_normal_(module.weight, nonlinearity="relu")

@@ -6,9 +6,10 @@ from livelossplot import PlotLosses
 from livelossplot.outputs import MatplotlibPlot
 from tqdm import tqdm
 from src.helpers import after_subplot
+from itertools import islice        
 
 
-def train_one_epoch(train_dataloader, model, optimizer, loss):
+def train_one_epoch(train_dataloader, model, optimizer, loss, no_of_batches = None):
     """
     Performs one train_one_epoch epoch
     """
@@ -30,6 +31,8 @@ def train_one_epoch(train_dataloader, model, optimizer, loss):
         leave=True,
         ncols=80,
     ):
+        if no_of_batches is not None and batch_idx >= no_of_batches:
+            break
         # move data to GPU
         if torch.cuda.is_available():
             data, target = data.cuda(), target.cuda()
@@ -91,7 +94,7 @@ def valid_one_epoch(valid_dataloader, model, loss):
     return valid_loss
 
 
-def optimize(data_loaders, model, optimizer, loss, n_epochs, save_path, interactive_tracking=False):
+def optimize(data_loaders, model, optimizer, loss, n_epochs, save_path, no_of_batches = None, interactive_tracking=False):
     # initialize tracker for minimum validation loss
     if interactive_tracking:
         liveloss = PlotLosses(outputs=[MatplotlibPlot(after_subplot=after_subplot)])
@@ -106,12 +109,16 @@ def optimize(data_loaders, model, optimizer, loss, n_epochs, save_path, interact
     # plateau
     # HINT: look here: 
     # https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
-    scheduler  = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10, threshold=0.0001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
+    scheduler  = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, threshold=0.0001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
+
+
 
     for epoch in range(1, n_epochs + 1):
 
+
+
         train_loss = train_one_epoch(
-            data_loaders["train"], model, optimizer, loss
+            data_loaders["train"], model, optimizer, loss, no_of_batches
         )
 
         valid_loss = valid_one_epoch(data_loaders["valid"], model, loss)
