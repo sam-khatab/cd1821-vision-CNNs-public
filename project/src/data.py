@@ -49,6 +49,7 @@ def get_data_loaders(
         "train": transforms.Compose([
             transforms.Resize(256),
             transforms.RandomCrop(224),
+            transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1), # Added to help with overfitting
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(10),
             transforms.ToTensor(),

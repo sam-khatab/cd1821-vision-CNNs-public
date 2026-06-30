@@ -19,9 +19,10 @@ class MyModel(nn.Module):
         nn.ReLU(inplace=True),
         nn.MaxPool2d(2, 2),
         
-        #nn.Conv2d(16, 16, kernel_size=3, padding=1),
-        #nn.ReLU(inplace=True),
-        #nn.MaxPool2d(2, 2),
+        nn.Conv2d(16, 16, kernel_size=3, padding=1),
+        nn.BatchNorm2d(16),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(2, 2),
 
         nn.Conv2d(16, 32, kernel_size=3, padding=1),
         nn.BatchNorm2d(32),
@@ -36,6 +37,9 @@ class MyModel(nn.Module):
  
         
         nn.Linear(32 * 7 * 7, 128),
+        nn.ReLU(inplace=True),
+        nn.Dropout(p=dropout),
+        nn.Linear(128, 128),
         nn.ReLU(inplace=True),
         nn.Dropout(p=dropout),
         nn.Linear(128, num_classes)
