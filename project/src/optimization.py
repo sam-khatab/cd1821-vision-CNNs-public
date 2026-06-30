@@ -1,3 +1,4 @@
+#optimization.py
 import torch
 import torch.nn as nn
 import torch.optim
@@ -11,7 +12,7 @@ def get_loss():
     """
 
     # YOUR CODE HERE: select a loss appropriate for classification
-    loss = nn.CrossEntropyLoss()
+    loss = nn.CrossEntropyLoss() #Should improve loss by 0.1
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     loss = loss.to(device)
 

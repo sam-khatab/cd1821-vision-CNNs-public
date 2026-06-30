@@ -1,3 +1,4 @@
+#data.py
 import math
 import torch
 import torch.utils.data
@@ -5,7 +6,7 @@ from pathlib import Path
 from torchvision import datasets, transforms
 import multiprocessing
 
-from .helpers import compute_mean_and_std, get_data_location
+from src.helpers import compute_mean_and_std, get_data_location
 import matplotlib.pyplot as plt
 
 
@@ -174,7 +175,7 @@ def visualize_one_batch(data_loaders, max_n: int = 5):
     class_names = data_loaders["train"].dataset.classes
 
     # Convert from BGR (the format used by pytorch) to
-    # RGB (the format expected by matplotlib)
+    # RGB (the format expected by matplotlib)s
     images = torch.permute(images, (0, 2, 3, 1)).clip(0, 1)
 
     # plot the images in the batch, along with the corresponding labels

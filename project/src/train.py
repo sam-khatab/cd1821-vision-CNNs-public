@@ -1,3 +1,4 @@
+#Train.py
 import tempfile
 
 import torch
@@ -6,7 +7,7 @@ from livelossplot import PlotLosses
 from livelossplot.outputs import MatplotlibPlot
 from tqdm import tqdm
 from src.helpers import after_subplot
-from itertools import islice        
+from itertools import islice
 
 
 def train_one_epoch(train_dataloader, model, optimizer, loss, no_of_batches = None):
@@ -21,7 +22,7 @@ def train_one_epoch(train_dataloader, model, optimizer, loss, no_of_batches = No
 
     # YOUR CODE HERE: set the module to training mode
     model.train()
-    
+
     train_loss = 0.0
 
     for batch_idx, (data, target) in tqdm(
@@ -107,7 +108,7 @@ def optimize(data_loaders, model, optimizer, loss, n_epochs, save_path, no_of_ba
     # Learning rate scheduler: setup a learning rate scheduler that
     # reduces the learning rate when the validation loss reaches a
     # plateau
-    # HINT: look here: 
+    # HINT: look here:
     # https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
     scheduler  = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, threshold=0.0001, threshold_mode='rel', cooldown=0, min_lr=1e-5, eps=1e-08)
 
@@ -167,7 +168,7 @@ def one_epoch_test(test_dataloader, model, loss):
 
         # set the model to evaluation mode
         model.eval()
-       
+
 
         if torch.cuda.is_available():
             model = model.cuda()
@@ -196,7 +197,7 @@ def one_epoch_test(test_dataloader, model, loss):
             maximum, idx = torch.max(logits, dim=1)
             pred  = idx
 
-            
+
             # compare predictions to true label
             correct += torch.sum(torch.squeeze(pred.eq(target.data.view_as(pred))).cpu())
             total += data.size(0)
@@ -207,7 +208,6 @@ def one_epoch_test(test_dataloader, model, loss):
         100. * correct / total, correct, total))
 
     return test_loss
-
 
     
 ######################################################################################
